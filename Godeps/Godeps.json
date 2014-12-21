@@ -1,0 +1,16 @@
+{
+	"ImportPath": "github.com/dtjm/bible",
+	"GoVersion": "go1.4",
+	"Deps": [
+		{
+			"ImportPath": "github.com/BurntSushi/toml",
+			"Comment": "v0.1.0-9-g3883ac1",
+			"Rev": "3883ac1ce943878302255f538fce319d23226223"
+		},
+		{
+			"ImportPath": "github.com/codegangsta/cli",
+			"Comment": "1.2.0-50-ga14c5b4",
+			"Rev": "a14c5b47c7efa4ff80cc42e1079a34b4756f2311"
+		}
+	]
+}
