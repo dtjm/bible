@@ -11,11 +11,12 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/codegangsta/cli"
+	"github.com/dtjm/bible/ref"
 )
 
 const (
 	esvBaseURL = "http://www.esvapi.org/v2/rest"
-	version    = "0.0.1"
+	version    = "0.0.3"
 )
 
 var (
@@ -27,11 +28,11 @@ type config struct {
 }
 
 func readConfig() *config {
-	c := config{}
+	c := config{Bookmarks: make(map[string]string)}
 	_, err := os.Stat(configFile)
 
 	if os.IsNotExist(err) {
-		log.Println("ReadConfig", err)
+		log.Printf("config file does not exist, creating %q", configFile)
 		c.Bookmarks["next"] = "Gen 1"
 		return &c
 	}
@@ -55,8 +56,14 @@ func (c *config) write() error {
 	return enc.Encode(c)
 }
 
-func nextRef(ref string) string {
-	return ref
+func nextRef(s string) string {
+	r, err := ref.Parse(s)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	nextRef := r.NextChapter()
+	return nextRef.String()
 }
 
 func main() {
