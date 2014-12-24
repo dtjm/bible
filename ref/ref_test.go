@@ -66,3 +66,21 @@ func TestChapterNext(t *testing.T) {
 		}
 	}
 }
+
+func TestString(t *testing.T) {
+	cases := []struct {
+		ref Ref
+		out string
+	}{
+		{Ref{book: Genesis, chapter: 1}, "Genesis 1"},
+		{Ref{book: Genesis, chapter: 50, verse: 1}, "Genesis 50:1"},
+	}
+
+	for _, c := range cases {
+		out := c.ref.String()
+		if out != c.out {
+			t.Errorf("(%v).String() -> %q, wanted %q",
+				c.ref, out, c.out)
+		}
+	}
+}

@@ -10,8 +10,8 @@ import (
 
 // Ref is a reference to a Bible passage
 type Ref struct {
-	book                          Book
-	chapter, startVerse, endVerse int
+	book           Book
+	chapter, verse int
 }
 
 var bookRegex = map[*regexp.Regexp]Book{
@@ -84,7 +84,7 @@ var bookRegex = map[*regexp.Regexp]Book{
 }
 
 // Parse takes a passage reference and returns a Ref object
-func Parse(s string) (Ref, error) {
+func Parse(s string) (*Ref, error) {
 	book := nullBook
 	chapter := 0
 	var err error
@@ -95,17 +95,17 @@ func Parse(s string) (Ref, error) {
 			if len(matches) > 1 && matches[1] != "" {
 				chapter, err = strconv.Atoi(matches[1])
 				if err != nil {
-					return Ref{}, err
+					return &Ref{}, err
 				}
 			}
 		}
 	}
 
 	if book == nullBook {
-		return Ref{}, fmt.Errorf("Error parsing ref string: %q", s)
+		return &Ref{}, fmt.Errorf("Error parsing ref string: %q", s)
 	}
 
-	return Ref{
+	return &Ref{
 		book:    book,
 		chapter: chapter,
 	}, nil
@@ -124,15 +124,15 @@ func (r *Ref) String() string {
 		buf.WriteString(fmt.Sprintf(" %d", r.chapter))
 	}
 
-	if r.startVerse > 0 {
-		buf.WriteString(fmt.Sprintf(":%d", r.startVerse))
+	if r.verse > 0 {
+		buf.WriteString(fmt.Sprintf(":%d", r.verse))
 	}
 
 	return buf.String()
 }
 
 // NextChapter returns the next chapter for a given reference
-func (r *Ref) NextChapter() Ref {
+func (r *Ref) NextChapter() *Ref {
 	nextRef := Ref{
 		book:    r.book,
 		chapter: r.chapter + 1,
@@ -143,5 +143,5 @@ func (r *Ref) NextChapter() Ref {
 		nextRef.chapter = 1
 	}
 
-	return nextRef
+	return &nextRef
 }

@@ -62,8 +62,8 @@ func nextRef(s string) string {
 		log.Fatal(err)
 	}
 
-	nextRef := r.NextChapter()
-	return nextRef.String()
+	// nextRef := r.NextChapter()
+	return r.NextChapter().String()
 }
 
 func main() {
@@ -83,18 +83,16 @@ func main() {
 			ShortName: "r",
 			Usage:     "Read a passage",
 			Action: func(c *cli.Context) {
-				var ref = strings.Join([]string(c.Args()), " ")
-				if strings.ToLower(ref) == "next" {
-					ref = conf.Bookmarks["next"]
-
-					conf.Bookmarks["next"] = nextRef(ref)
-					conf.write()
+				var refString = strings.Join([]string(c.Args()), " ")
+				if strings.ToLower(refString) == "next" {
+					refString = conf.Bookmarks["next"]
+					conf.Bookmarks["next"] = nextRef(refString)
 				}
 
 				query := url.Values{
 					"key":                        {"IP"},
 					"output-format":              {"plain-text"},
-					"passage":                    {ref},
+					"passage":                    {refString},
 					"include-headings":           {"0"},
 					"include-subheadings":        {"0"},
 					"include-passage-references": {"0"},
@@ -111,6 +109,47 @@ func main() {
 				io.Copy(os.Stdout, resp.Body)
 				resp.Body.Close()
 				fmt.Print("\n\n")
+
+				parsedRef, err := ref.Parse(refString)
+				if err != nil {
+					log.Fatal(err)
+				}
+				conf.Bookmarks["last"] = parsedRef.String()
+				conf.write()
+			},
+		},
+
+		{
+			Name:      "mark",
+			ShortName: "m",
+			Usage:     "Bookmark a passage",
+			Action: func(c *cli.Context) {
+				if len(c.Args()) == 0 {
+					for m, r := range conf.Bookmarks {
+						fmt.Printf("%s:\t%s\n", m, r)
+					}
+					return
+				}
+
+				if len(c.Args()) == 1 {
+					mark := c.Args()[0]
+					if r, ok := conf.Bookmarks[mark]; ok {
+						fmt.Printf("%s:\t%s\n", mark, r)
+					} else {
+						log.Printf("You don't have a bookmark called %q", mark)
+					}
+					return
+				}
+
+				mark := c.Args()[0]
+				var refString = strings.Join([]string(c.Args()[1:]), " ")
+				r, err := ref.Parse(refString)
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				conf.Bookmarks[mark] = r.String()
+				conf.write()
 			},
 		},
 	}
