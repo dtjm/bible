@@ -12,3 +12,8 @@ bible read John 3:16  # Print the passage to the terminal
 bible read next       # Read the bookmark named "next" and advance the bookmark
 bible play John 3:16  # Play a reading of the passage
 ```
+
+Installation
+------------
+- [Install Homebrew](http://brew.sh/#install)
+- `brew update && brew install dtjm/taps/bible`
