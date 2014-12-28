@@ -3,7 +3,6 @@ package ref
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"regexp"
 	"strconv"
 )
@@ -90,7 +89,7 @@ func Parse(s string) (*Ref, error) {
 	var err error
 	for re, b := range bookRegex {
 		if matches := re.FindStringSubmatch(s); len(matches) > 0 {
-			log.Printf("got matches for %q: %q", re.String(), matches)
+			// log.Printf("got matches for %q: %q", re.String(), matches)
 			book = b
 			if len(matches) > 1 && matches[1] != "" {
 				chapter, err = strconv.Atoi(matches[1])
