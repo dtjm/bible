@@ -3,14 +3,27 @@
 	"GoVersion": "go1.4",
 	"Deps": [
 		{
+			"ImportPath": "code.google.com/p/portaudio-go/portaudio",
+			"Comment": "null-24",
+			"Rev": "effe9be3431cd0493b744a63651fd05ccdccf304"
+		},
+		{
 			"ImportPath": "github.com/BurntSushi/toml",
 			"Comment": "v0.1.0-9-g3883ac1",
 			"Rev": "3883ac1ce943878302255f538fce319d23226223"
 		},
 		{
+			"ImportPath": "github.com/Wessie/audec",
+			"Rev": "7e9564626271b94a45b744c3b9031ade9066d6d2"
+		},
+		{
 			"ImportPath": "github.com/codegangsta/cli",
 			"Comment": "1.2.0-50-ga14c5b4",
 			"Rev": "a14c5b47c7efa4ff80cc42e1079a34b4756f2311"
+		},
+		{
+			"ImportPath": "github.com/facebookgo/counting",
+			"Rev": "0f3846f780cadb7682ce04da0ee105a65fd49de5"
 		}
 	]
 }
