@@ -21,7 +21,7 @@ func TestParse(t *testing.T) {
 			continue
 		}
 
-		if c.r != pr {
+		if c.r != *pr {
 			t.Errorf("parsed ref: %+v, expected %+v", pr, c.r)
 		}
 	}
@@ -60,7 +60,7 @@ func TestChapterNext(t *testing.T) {
 
 	for _, c := range cases {
 		nextRef := c.ref.NextChapter()
-		if nextRef != c.next {
+		if *nextRef != c.next {
 			t.Errorf("(%v).NextChapter -> %v, wanted %v",
 				c.ref, nextRef, c.next)
 		}

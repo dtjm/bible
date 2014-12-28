@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/binary"
 	"fmt"
-	"github.com/facebookgo/counting"
 	"io"
 	"io/ioutil"
 	"log"
@@ -18,14 +17,17 @@ import (
 
 	"code.google.com/p/portaudio-go/portaudio"
 	"github.com/BurntSushi/toml"
+	"github.com/PuerkitoBio/goquery"
 	"github.com/Wessie/audec/mp3"
 	"github.com/codegangsta/cli"
 	"github.com/dtjm/bible/ref"
+	"github.com/facebookgo/counting"
+	"github.com/fatih/color"
 )
 
 const (
 	esvBaseURL = "http://www.esvapi.org/v2/rest"
-	version    = "0.0.4"
+	version    = "0.0.5"
 )
 
 var (
@@ -301,6 +303,47 @@ func main() {
 				}()
 
 				wg.Wait()
+			},
+		},
+
+		{
+			Name:      "search",
+			ShortName: "s",
+			Usage:     "Search the Bible",
+			Action: func(c *cli.Context) {
+				if len(c.Args()) < 1 {
+					cli.ShowCommandHelp(c, c.Command.Name)
+					return
+				}
+				var queryString = strings.Join([]string(c.Args()), " ")
+
+				query := url.Values{
+					"key":   {"IP"},
+					"words": {queryString},
+					// "q":                {queryString},
+					"search-text":      {"text"},
+					"results-per-page": {"100"},
+				}
+
+				resp, err := http.Get(esvBaseURL + "/query?" + query.Encode())
+				if err != nil {
+					log.Fatal(err)
+				}
+				defer resp.Body.Close()
+
+				doc, err := goquery.NewDocumentFromResponse(resp)
+				if err != nil {
+					log.Fatal(err)
+				}
+				doc.Find("span.show-me").Remove()
+
+				refStyle := color.New(color.Bold).Add(color.FgGreen)
+				doc.Find("p.search-result").Each(func(_ int, s *goquery.Selection) {
+					refStyle.Print(s.Find("a").First().Remove().Text())
+					fmt.Println("\t", s.Text())
+				})
+
+				fmt.Print("\n\n")
 			},
 		},
 	}
